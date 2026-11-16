@@ -21,7 +21,7 @@ static NSString *FDLocalizedString(NSString *key, NSString *comment) {
     return [bundle localizedStringForKey:key value:key table:nil];
 }
 
-NSString *const FDAppGroup = @"group.com.example.sdkshift";
+NSString *const FDAppGroup = @"group.com.sheldonfornet.sdkshift";
 NSErrorDomain const FDErrorDomain = @"ForceDuo";
 
 // LaunchServices "Bundle" record layouts (CoreServicesStore v2), keyed by record size.

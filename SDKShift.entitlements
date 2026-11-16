@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.example.sdkshift</string>
+		<string>group.com.sheldonfornet.sdkshift</string>
 	</array>
 </dict>
 </plist>

@@ -20,9 +20,9 @@
 ## 构建与签名
 
 1. 用 Xcode 打开 `SDKShift.xcodeproj`。已使用 Xcode 27.2 编译，最低部署版本为 iOS 27.0。
-2. 在 Signing & Capabilities 选择自己的 Team。仓库不包含个人 Team，签名前需配置自己的团队与标识。
+2. 在 Signing & Capabilities 选择自己的 Team。本地工程当前包含所有者的 Team 配置，其他开发者需替换。
 3. 注册该团队可使用的 Bundle ID 与 App Group。
-4. 保持 `SDKShift.entitlements`、`Sources/FDEngine.m` 中的 `FDAppGroup` 和签名描述文件一致。当前组名 `group.com.example.sdkshift` 不是通用授权。
+4. 保持 `SDKShift.entitlements`、`Sources/FDEngine.m` 中的 `FDAppGroup` 和签名描述文件一致。当前组名 `group.com.sheldonfornet.sdkshift` 不是通用授权。
 5. 若重新生成工程，同步修改 `project.yml` 中的签名配置。
 6. 连接并信任 iPhone，启用开发者模式，构建运行。
 

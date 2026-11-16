@@ -14,8 +14,8 @@ targets:
           enabled: 1
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.sdkshift
-        DEVELOPMENT_TEAM: ""
+        PRODUCT_BUNDLE_IDENTIFIER: com.sheldonfornet.sdkshift
+        DEVELOPMENT_TEAM: GU32528JRC
         CODE_SIGN_STYLE: Automatic
         REGISTER_APP_GROUPS: YES
         GENERATE_INFOPLIST_FILE: YES

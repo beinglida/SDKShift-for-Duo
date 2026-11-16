@@ -20,9 +20,9 @@ Change the SDK version tag recorded in LaunchServices to explore app display com
 ## Build and sign
 
 1. Open `SDKShift.xcodeproj` in Xcode. The project has been built with Xcode 27.2; its deployment target is iOS 27.0.
-2. Select your own development Team under Signing & Capabilities. The repository leaves the Team blank; configure your own authorized identifiers before signing.
+2. Select your own development Team under Signing & Capabilities. The local project currently contains its owner's Team configuration; other developers must replace it.
 3. Register a Bundle ID and App Group authorized for your Team.
-4. Keep `SDKShift.entitlements`, `FDAppGroup` in `Sources/FDEngine.m`, and your provisioning profile consistent. `group.com.example.sdkshift` is the current configured identifier, not a universally authorized group.
+4. Keep `SDKShift.entitlements`, `FDAppGroup` in `Sources/FDEngine.m`, and your provisioning profile consistent. `group.com.sheldonfornet.sdkshift` is the current configured identifier, not a universally authorized group.
 5. Keep `project.yml` synchronized with signing changes if you regenerate the project.
 6. Connect and trust your iPhone, enable Developer Mode, then build and run.
 
@@ -106,7 +106,7 @@ python3 Tests/check_localizations.py
 - [worse_query](https://github.com/forcequitOS/worse_query): bundled source declares GPL-3.0-or-later. Original copyright notices remain intact; distribution must account for that license.
 - [Community SDK experiment](https://www.reddit.com/r/sideloaded/comments/1xvhqh4/release_experimental_duo_sdk_remove_the_black/): inspiration, not a universal compatibility guarantee.
 
-No new blanket MIT license is assigned to upstream code. This is an experimental derivative project; publication and redistribution require resolving the upstream licensing status.
+No new blanket MIT license is assigned to upstream code. This remains a local derivative prototype; no public repository has been created by this task.
 
 ### Index navigation verification
 

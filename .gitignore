@@ -6,13 +6,3 @@ xcuserdata/
 *.ipa
 *.mobileprovision
 *.p12
-
-*.p8
-*.pem
-*.key
-*.cer
-.env
-.env.*
-Documents/Backups/
-*.csstore
-*.log
