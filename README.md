@@ -17,6 +17,8 @@ Change the SDK version tag recorded in LaunchServices to explore app display com
 - Original SDK values and last-written values are stored separately, with migration from earlier SDKShift builds.
 - Fresh SDK snapshot checks before applying, serialized engine access, and up to 30 local activity records.
 - On-device letter avatars; no network icon lookup.
+- Recover an externally overridden SDK tag: if another tool changed an app's tag, enter a version you verified against a pre-change backup. SDKShift never treats the already-overridden value as the original, and clears the old restore point only after a confirmed write.
+- When the LaunchServices store can't be reached, reports distinguish the failure mode: scan timeout, cache not found, or cache found but inaccessible.
 - **English by default**, plus Simplified Chinese, Traditional Chinese, Japanese, Korean, Spanish, French, German, and Vietnamese. Select **Apps → App language** at the top of the home page. The choice persists and takes effect immediately without changing SDK settings or recovery records. The seven additional languages cover the interface and operation notices; engine errors currently fall back to English. Simplified Chinese also translates engine errors. Technical traces and existing report snapshots remain verbatim for troubleshooting.
 
 ## Install (prebuilt IPA)
@@ -112,6 +114,16 @@ After app or system updates, recheck the override and display behavior. Apply ch
 This fork adapts the [ForceDuoApp 1.2 fix](https://github.com/34306/ForceDuoApp/commit/5b65200015f7ed0a0fdf34708bd857e4a34e1f80). Instead of scanning upward from inode 16, the fallback creates a temporary local probe file to estimate the current inode high-water mark, scans downward, then checks nearby inodes after the first matching cache. Reports now distinguish scan timeout, cache not found, and cache found but inaccessible.
 
 **Limitations:** This improves cache discovery and diagnostics only. It has not been verified on an iOS 27.3 beta device and cannot guarantee read/write access to the system store. Scanning or performing a dry run does not write SDK changes. Review original SDK records carefully before applying changes: SDKShift cannot automatically recover original values corrupted by another tool.
+
+### Troubleshooting: LaunchServices cache errors
+
+When the store can't be opened, the report names the specific failure, which separates a signing issue from a device/OS limitation:
+
+- **Cache found but could not open its store** — the store exists but the sandbox request was refused. This points to the sandbox escape being blocked on that iOS build (for example a patched version), not to a signing or App Group problem.
+- **Inode scan timed out** — discovery did not reach the store in time; retry, or the device may be heavily loaded.
+- **Could not locate the LaunchServices cache on this device** — no matching store was found; the device or iOS version may be unsupported.
+
+The signing method (Xcode or enterprise certificate) does not change these: they occur after the app has launched and resolved its App Group. If every signer sees the same cache error on the same iOS build, the cause is the OS/exploit support, not the signature.
 
 ### Recover an externally overridden SDK tag from a backup
 
