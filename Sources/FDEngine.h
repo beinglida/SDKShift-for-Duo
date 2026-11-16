@@ -3,7 +3,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern NSString *const FDAppGroup;
+extern NSString * _Nullable FDAppGroup;  // Resolved at launch from the signed entitlements.
 extern NSErrorDomain const FDErrorDomain;
 
 @interface FDAppRecord : NSObject

@@ -1,5 +1,6 @@
 #import "FDEngine.h"
 #import "worse_query.h"
+#import <Security/Security.h>
 #include <dlfcn.h>
 #include <mach/mach.h>
 #include <fcntl.h>
@@ -21,7 +22,32 @@ static NSString *FDLocalizedString(NSString *key, NSString *comment) {
     return [bundle localizedStringForKey:key value:key table:nil];
 }
 
-NSString *const FDAppGroup = @"group.com.sheldonfornet.sdkshift";
+// The App Group is read from THIS build's own signed entitlements at launch,
+// so the IPA can be re-signed with any certificate and any App Group without
+// editing or recompiling the source. The first "group." entry is used.
+// SecTask is SPI and not exported by the public Security module, so declare the
+// opaque type and prototypes here. The symbols link from Security.framework.
+typedef struct __SecTask *SecTaskRef;
+SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef allocator);
+CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef task, CFStringRef entitlement, CFErrorRef *error);
+
+NSString * _Nullable FDAppGroup = nil;
+
+__attribute__((constructor)) static void FDResolveAppGroup(void) {
+    SecTaskRef task = SecTaskCreateFromSelf(NULL);
+    if (!task) return;
+    CFTypeRef value = SecTaskCopyValueForEntitlement(task, CFSTR("com.apple.security.application-groups"), NULL);
+    if (value && CFGetTypeID(value) == CFArrayGetTypeID()) {
+        for (id group in (__bridge NSArray *)value) {
+            if ([group isKindOfClass:NSString.class] && [(NSString *)group hasPrefix:@"group."]) {
+                FDAppGroup = [group copy];
+                break;
+            }
+        }
+    }
+    if (value) CFRelease(value);
+    CFRelease(task);
+}
 NSErrorDomain const FDErrorDomain = @"ForceDuo";
 
 // LaunchServices "Bundle" record layouts (CoreServicesStore v2), keyed by record size.
@@ -424,6 +450,11 @@ static NSArray<NSString *> *mappedStoreDirectories(NSMutableString *log) {
 }
 
 - (FDAccess *)openStoreAccess:(NSError **)error {
+    if (FDAppGroup.length == 0) {
+        [_log appendString:@"App Group: not found in signed entitlements\n"];
+        if (error) *error = fdError(FDLocalizedString(@"No App Group found in this build's signature. Enable the App Groups capability (any group.* identifier) when signing.", nil));
+        return nil;
+    }
     NSURL *groupURL = [NSFileManager.defaultManager containerURLForSecurityApplicationGroupIdentifier:FDAppGroup];
     [_log appendFormat:@"App Group %@: %@\n", FDAppGroup, groupURL ? @"accessible" : @"unavailable"];
     if (!groupURL) {
