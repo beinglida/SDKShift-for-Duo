@@ -1,0 +1,113 @@
+
+// SDKShift application UI
+"Apps" = "应用";
+"Changes" = "变更";
+"History" = "记录";
+"About" = "关于";
+"Scan" = "扫描";
+"OK" = "知道了";
+"Change the tag.\nExplore more space." = "换个标记，\n探索更多显示空间。";
+"Select apps → Review changes → Apply and restart" = "选择应用 → 检查变更 → 写入后完整重启";
+"Only apps below SDK 27.2" = "仅显示低于 SDK 27.2 的应用";
+"No matching apps" = "没有匹配应用";
+"Adjust the filter, change your search, or scan again." = "尝试关闭筛选、修改搜索内容或重新扫描。";
+"Search names or bundle IDs" = "搜索名称或 Bundle ID";
+"Queue change" = "加入变更";
+"SDK up to date" = "SDK 达标";
+"Restore" = "还原";
+"Restart your iPhone after applying" = "写入后需要完整重启";
+"Respringing does not guarantee SDK state reloads. A successful write does not mean an app is fully adapted." = "注销 SpringBoard 不能保证 SDK 相关状态重新加载。写入成功也不代表应用已完成适配。";
+"Queue changes or restorations from Apps." = "从应用页面添加变更或还原操作。";
+"Restore original value" = "还原原值";
+"Remove" = "移除";
+"1. Check without writing" = "1. 预检，不写入";
+"2. Apply changes" = "2. 写入变更";
+"View report" = "查看检查报告";
+"Apply these SDK changes?" = "写入这批 SDK 变更？";
+"Apply and save recovery data" = "写入并保存恢复记录";
+"Save your work in other apps first. Restart your iPhone after applying." = "请先保存其他应用中的工作，完成后完整重启手机。";
+"No activity yet" = "还没有操作记录";
+"Check and apply results stay on this device. Up to 30 entries are kept." = "预检和写入结果会保存在此设备，最多保留 30 条。";
+"Report" = "检查报告";
+"Target SDK" = "目标 SDK";
+"System" = "系统";
+"Change app SDK version tags to explore display compatibility. This does not recompile apps or upgrade iOS." = "改变应用的 SDK 版本标记，探索显示兼容性。不会重新编译应用，也不会升级系统。";
+"Recovery and privacy" = "恢复与隐私";
+"Existing SDKShift recovery data is migrated. Original values from other tools are not imported automatically." = "已有 SDKShift 恢复记录会迁移。其他工具的原值不会自动导入。";
+"App listings, reports, and recovery data stay on your device. Review app identifiers and paths before sharing reports." = "应用目录、报告和恢复记录保留在设备内。分享报告前请检查其中的应用标识与路径。";
+"Credits" = "实现来源";
+"The interface, change queue, history, and service adapter were rewritten for SDKShift. The cache engine derives from ForceDuoApp; worse_query retains its copyright and GPL notices." = "界面、变更队列、操作记录和服务适配层为本项目重写。底层缓存引擎仍衍生自 ForceDuoApp；worse_query 保留原作者版权和 GPL 声明。";
+"No checks have run yet." = "尚未运行检查。";
+"Check completed" = "预检完成";
+"Applied · Restart required" = "写入完成 · 请完整重启";
+"Operation incomplete" = "操作未完成";
+"The system database was not written. Review write-access and lock results in the report." = "未写入系统数据库。请查看检查报告中的写权限与锁定结果。";
+"The database was written. Restart your iPhone, then check the display behavior." = "数据库已写入。请完整重启 iPhone 后验证显示效果。";
+"%lld apps · On-device, no icon downloads" = "%lld 个应用 · 设备内处理，不联网获取图标";
+"Pending · %lld" = "待处理 · %lld";
+"Language" = "语言";
+"App language" = "应用语言";
+"Changes take effect immediately. Saved SDK settings are not affected." = "切换立即生效，不影响已保存的 SDK 设置。";
+"App information changed. Scan and select again:" = "应用信息已变化，请重新扫描并选择：";
+"FOR DUO / COMPATIBILITY LAB" = "为 DUO 打造 / 兼容性实验室";
+"Cancel" = "取消";
+
+// Engine messages; diagnostic traces remain verbatim.
+"Could not find or open the LaunchServices cache (iOS refused access)." = "无法找到或打开 LaunchServices 缓存（iOS 拒绝访问）。";
+"Could not read the cache (errno %d)." = "无法读取缓存（错误码 %d）。";
+"The cache is empty or too large." = "缓存为空或过大。";
+"The cache format does not match a verified layout. Nothing was changed." = "缓存格式与已验证布局不匹配，未进行修改。";
+"The current cache failed the CoreServicesStore check. Nothing written." = "当前缓存未通过 CoreServicesStore 检查，未写入。";
+"The cache format does not match. Nothing written." = "缓存格式不匹配，未写入。";
+"Invalid version for %@." = "%@ 的版本无效。";
+"There are no changes to write." = "没有需要写入的变更。";
+"Could not write the draft copy." = "无法写入临时副本。";
+"Could not compute the checksum (%@ %ld)." = "无法计算校验和（%@ %ld）。";
+"The draft is invalid after the checksum fix. Nothing written." = "修正校验和后临时副本仍无效，未写入。";
+"The draft changed bytes outside the allowed fields. Nothing written." = "临时副本修改了允许字段以外的字节，未写入。";
+"The draft did not parse back correctly. Nothing written." = "临时副本未能正确重新解析，未写入。";
+"iOS did not allow opening the cache for writing (errno %d)." = "iOS 不允许以写入方式打开缓存（错误码 %d）。";
+"lsd just changed or locked the cache. Please try again." = "lsd 刚刚修改或锁定了缓存，请重试。";
+"The write could not be verified; the original bytes were restored." = "写入未通过验证，已恢复原始字节。";
+"The write failed and could not be restored. A backup is in Documents/Backups." = "写入失败且无法恢复。备份位于 Documents/Backups。";
+"Wrote and verified %lu app(s):\n%@" = "已写入并验证 %lu 个应用：\n%@";
+"App Group %@ is unavailable. Check the signed application-groups entitlement and provisioning profile." = "App Group %@ 不可用，请检查签名中的应用组权限和描述文件。";
+
+// SDKShift interface. Untranslated engine diagnostics fall back to English.
+"Default SDK" = "默认 SDK";
+"Current SDK" = "当前 SDK";
+"Customize SDK" = "自定义 SDK";
+"SDK version" = "SDK 版本";
+"Use 27.2.0" = "使用 27.2.0";
+"Enter major.minor or major.minor.patch. Major: 1–99; minor and patch: 0–99." = "输入 主版本.次版本 或 主版本.次版本.修订版。主版本：1–99；其他：0–99。";
+"This matches the current SDK. No change is needed." = "与当前 SDK 相同，无需变更。";
+"This will lower the SDK tag. Review compatibility after restarting." = "这将降低 SDK 标记。重启后请检查兼容性。";
+"Invalid SDK version" = "SDK 版本无效";
+"Each app can use a different target. Changing this tag does not add APIs or guarantee compatibility with a newer SDK." = "每个应用可使用不同目标。更改标记不会添加 API，也不保证兼容更高版本 SDK。";
+
+// Modified app grouping
+"Modified SDK" = "已修改 SDK";
+"Other apps" = "其他应用";
+"No modified apps match. Apps with a confirmed SDKShift override appear here." = "没有匹配的已修改应用。经 SDKShift 记录并确认当前覆写值的应用会显示在这里。";
+
+// Library sorting and index
+"Sort apps" = "应用排序";
+"Name · A–Z" = "名称 · 正序";
+"Name · Z–A" = "名称 · 倒序";
+"Name writing system" = "名称文字类型";
+"SDK · Highest first" = "SDK · 从高到低";
+"Groups use the app name’s writing system, not its interface language." = "按应用名称的文字类型分组，不代表应用的界面语言。";
+"Name index" = "名称索引";
+"Latin" = "拉丁字母";
+"Han characters" = "汉字";
+"Japanese kana" = "日文假名";
+"Hangul" = "韩文";
+"Cyrillic" = "西里尔字母";
+"Arabic" = "阿拉伯文字";
+"Other scripts" = "其他文字";
+
+"Change the tag. Explore more space." = "更改标记，探索更多显示空间。";
+
+"Only apps below SDK %@" = "仅显示低于 SDK %@ 的应用";
+
+"Use %@" = "使用 %@";
