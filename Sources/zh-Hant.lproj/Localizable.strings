@@ -149,3 +149,13 @@
 "Developer & contact" = "開發者與聯絡";
 
 "GitHub project" = "GitHub 專案";
+
+// Verified external SDK recovery
+"Recover from backup" = "從備份還原";
+"Verified external recovery" = "外部還原（已核對備份）";
+"Enter the SDK version found in a backup from before another tool changed this app." = "請輸入在其他工具修改此 App 之前的備份中查到的 SDK 版本。";
+"I verified this SDK version against a pre-change backup." = "我已在修改前的備份中核對此 SDK 版本。";
+"Queue verified recovery" = "加入已核對的還原工作";
+"After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "寫入成功後，將清除此 App 舊有的 SDKShift 還原紀錄。這不代表已驗證 App 實際編譯時使用的 SDK 版本。";
+"A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "待處理項目包含從備份還原。寫入前請核對 App Bundle ID 和目標 SDK 版本。";
+"Write succeeded, but refreshing the app list failed. Restart and scan again." = "寫入成功，但重新整理 App 清單失敗。請重新啟動並再次掃描。";
