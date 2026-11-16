@@ -54,6 +54,9 @@
 
 // Engine messages; diagnostic traces remain verbatim.
 "Could not find or open the LaunchServices cache (iOS refused access)." = "无法找到或打开 LaunchServices 缓存（iOS 拒绝访问）。";
+"Found a LaunchServices cache but could not open its store (%@)." = "找到了 LaunchServices 缓存，但无法打开对应的数据库（%@）。";
+"Could not locate the LaunchServices cache: inode scan timed out." = "无法定位 LaunchServices 缓存：inode 扫描超时。";
+"Could not locate the LaunchServices cache on this device." = "无法在此设备上定位 LaunchServices 缓存。";
 "Could not read the cache (errno %d)." = "无法读取缓存（错误码 %d）。";
 "The cache is empty or too large." = "缓存为空或过大。";
 "The cache format does not match a verified layout. Nothing was changed." = "缓存格式与已验证布局不匹配，未进行修改。";

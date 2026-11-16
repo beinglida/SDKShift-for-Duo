@@ -107,6 +107,12 @@ The screenshots show the earlier ForceDuo-style interface, not SDKShift's redesi
 
 After app or system updates, recheck the override and display behavior. Apply changes, fully restart the iPhone, then validate each app on both screens and in both orientations.
 
+### iOS 27.3 beta cache discovery diagnostics
+
+This fork adapts the [ForceDuoApp 1.2 fix](https://github.com/34306/ForceDuoApp/commit/5b65200015f7ed0a0fdf34708bd857e4a34e1f80). Instead of scanning upward from inode 16, the fallback creates a temporary local probe file to estimate the current inode high-water mark, scans downward, then checks nearby inodes after the first matching cache. Reports now distinguish scan timeout, cache not found, and cache found but inaccessible.
+
+**Limitations:** This improves cache discovery and diagnostics only. It has not been verified on an iOS 27.3 beta device and cannot guarantee read/write access to the system store. Scanning or performing a dry run does not write SDK changes. Review original SDK records carefully before applying changes: SDKShift cannot automatically recover original values corrupted by another tool.
+
 ## Validation and limits
 
 An earlier build successfully read 604-byte Bundle records and parsed 400 apps on an iPhone Duo running iOS 27.2. The earlier SDKShift build was signed, installed and launched. The rewritten UI and bilingual build have passed local compilation; this is not proof of every target app's behavior or of visual QA on every device size.

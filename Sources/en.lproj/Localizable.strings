@@ -39,6 +39,9 @@
 "No log yet." = "No log yet.";
 "Log" = "Log";
 "Could not find or open the LaunchServices cache (iOS refused access)." = "Could not find or open the LaunchServices cache (iOS refused access).";
+"Found a LaunchServices cache but could not open its store (%@)." = "Found a LaunchServices cache but could not open its store (%@).";
+"Could not locate the LaunchServices cache: inode scan timed out." = "Could not locate the LaunchServices cache: inode scan timed out.";
+"Could not locate the LaunchServices cache on this device." = "Could not locate the LaunchServices cache on this device.";
 "Could not read the cache (errno %d)." = "Could not read the cache (errno %d).";
 "The cache is empty or too large." = "The cache is empty or too large.";
 "The cache format does not match a verified layout. Nothing was changed." = "The cache format does not match a verified layout. Nothing was changed.";
