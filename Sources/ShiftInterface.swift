@@ -579,6 +579,27 @@ private struct AboutScreen: View {
                 LabeledContent("System", value: UIDevice.current.systemVersion)
                 Text("Change app SDK version tags to explore display compatibility. This does not recompile apps or upgrade iOS.")
             }
+            Section("Developer & contact") {
+                Link(destination: URL(string: "https://x.com/dreamer_in_ca")!) {
+                    Label {
+                        Text(verbatim: "X · @dreamer_in_ca")
+                    } icon: { Image(systemName: "person.crop.circle") }
+                }
+                Link(destination: URL(string: "mailto:beinglida@gmail.com")!) {
+                    Label {
+                        Text(verbatim: "beinglida@gmail.com")
+                    } icon: { Image(systemName: "envelope") }
+                }
+                Link(destination: URL(string: "https://github.com/beinglida/SDKShift-for-Duo")!) {
+                    Label {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("GitHub project")
+                            Text(verbatim: "beinglida/SDKShift-for-Duo")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                    } icon: { Image(systemName: "chevron.left.forwardslash.chevron.right") }
+                }
+            }
             Section("Recovery and privacy") {
                 Text("Existing SDKShift recovery data is migrated. Original values from other tools are not imported automatically.")
                 Text("App listings, reports, and recovery data stay on your device. Review app identifiers and paths before sharing reports.")
