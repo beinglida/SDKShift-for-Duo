@@ -149,3 +149,13 @@
 "Developer & contact" = "Nhà phát triển và liên hệ";
 
 "GitHub project" = "Dự án GitHub";
+
+// Verified external SDK recovery
+"Recover from backup" = "Khôi phục từ bản sao lưu";
+"Verified external recovery" = "Khôi phục thay đổi bên ngoài đã xác minh";
+"Enter the SDK version found in a backup from before another tool changed this app." = "Nhập phiên bản SDK từ bản sao lưu được tạo trước khi công cụ khác thay đổi ứng dụng này.";
+"I verified this SDK version against a pre-change backup." = "Tôi đã kiểm tra phiên bản SDK này trong bản sao lưu trước khi thay đổi.";
+"Queue verified recovery" = "Thêm khôi phục đã xác minh";
+"After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "Sau khi ghi thành công, điểm khôi phục SDKShift cũ của ứng dụng này sẽ bị xóa. Thao tác này không xác minh SDK dùng khi biên dịch ứng dụng.";
+"A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "Có thao tác khôi phục từ bản sao lưu. Hãy xác nhận ID ứng dụng và phiên bản SDK đích trước khi ghi.";
+"Write succeeded, but refreshing the app list failed. Restart and scan again." = "Đã ghi thành công nhưng không thể làm mới danh sách ứng dụng. Hãy khởi động lại và quét lần nữa.";

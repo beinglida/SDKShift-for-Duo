@@ -149,3 +149,13 @@
 "Developer & contact" = "Desarrollador y contacto";
 
 "GitHub project" = "Proyecto en GitHub";
+
+// Verified external SDK recovery
+"Recover from backup" = "Restaurar desde copia de seguridad";
+"Verified external recovery" = "Recuperación externa verificada";
+"Enter the SDK version found in a backup from before another tool changed this app." = "Introduce la versión del SDK que figure en una copia anterior al cambio realizado por otra herramienta.";
+"I verified this SDK version against a pre-change backup." = "He verificado esta versión del SDK en una copia anterior al cambio.";
+"Queue verified recovery" = "Añadir recuperación verificada";
+"After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "Tras una escritura correcta, se borra el punto de restauración anterior de SDKShift para esta app. Esto no verifica el SDK real de compilación.";
+"A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "Se incluye una recuperación desde copia. Comprueba los ID de las apps y las versiones de SDK antes de escribir.";
+"Write succeeded, but refreshing the app list failed. Restart and scan again." = "Se escribió correctamente, pero no se pudo actualizar la lista de apps. Reinicia y vuelve a escanear.";

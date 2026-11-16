@@ -411,6 +411,7 @@ private struct ApplicationTile: View {
     @Environment(ShiftWorkspace.self) private var workspace
     let app: AppEntry
     @State private var editing = false
+    @State private var recovering = false
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
@@ -430,6 +431,8 @@ private struct ApplicationTile: View {
             }
             Button("Customize SDK", systemImage: "slider.horizontal.3") { editing = true }
                 .buttonStyle(.borderedProminent).disabled(workspace.busy)
+            Button("Recover from backup", systemImage: "clock.arrow.circlepath") { recovering = true }
+                .buttonStyle(.bordered).disabled(workspace.busy)
             if let request = workspace.requests[app.id] {
                 Text("\(app.version.description) → \(request.target.description)").font(.caption.monospaced())
             }
@@ -445,14 +448,22 @@ private struct ApplicationTile: View {
             }.disabled(workspace.busy)
         }
         .padding(18).background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18))
-        .sheet(isPresented: $editing) { SDKEditor(app: app).environment(workspace) }
+        .sheet(isPresented: $editing) { SDKEditor(app: app, purpose: .customize).environment(workspace) }
+        .sheet(isPresented: $recovering) { SDKEditor(app: app, purpose: .verifiedRecovery).environment(workspace) }
     }
+}
+private enum SDKEditorPurpose: Equatable {
+    case customize
+    case verifiedRecovery
 }
 private struct SDKEditor: View {
     @Environment(ShiftWorkspace.self) private var workspace
     @Environment(\.dismiss) private var dismiss
     let app: AppEntry
+    let purpose: SDKEditorPurpose
     @State private var input = ""
+    @State private var verifiedBackup = false
+    private var isRecovery: Bool { purpose == .verifiedRecovery }
     private var target: ReleaseTag? { ReleaseTag.parse(input) }
     var body: some View {
         NavigationStack {
@@ -465,7 +476,9 @@ private struct SDKEditor: View {
                 Section("Target SDK") {
                     TextField("SDK version", text: $input).keyboardType(.decimalPad)
                         .autocorrectionDisabled().textInputAutocapitalization(.never)
-                    Button("Use \(workspace.defaultSDK.description)") { input = workspace.defaultSDK.description }
+                    if !isRecovery {
+                        Button("Use \(workspace.defaultSDK.description)") { input = workspace.defaultSDK.description }
+                    }
                     Text("Enter major.minor or major.minor.patch. Major: 1–99; minor and patch: 0–99.")
                         .font(.footnote).foregroundStyle(.secondary)
                     if let target {
@@ -474,22 +487,48 @@ private struct SDKEditor: View {
                         if target < app.version { Text("This will lower the SDK tag. Review compatibility after restarting.").foregroundStyle(.orange) }
                     } else { Text("Invalid SDK version").foregroundStyle(.red) }
                 }
-                Section {
-                    Text("Each app can use a different target. Changing this tag does not add APIs or guarantee compatibility with a newer SDK.")
-                    Text("Restart your iPhone after applying")
-                }.font(.footnote)
+                if isRecovery {
+                    Section("Verified external recovery") {
+                        Text("Enter the SDK version found in a backup from before another tool changed this app.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                        Toggle("I verified this SDK version against a pre-change backup.", isOn: $verifiedBackup)
+                        Text("After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                } else {
+                    Section {
+                        Text("Each app can use a different target. Changing this tag does not add APIs or guarantee compatibility with a newer SDK.")
+                        Text("Restart your iPhone after applying")
+                    }.font(.footnote)
+                }
             }
-            .navigationTitle("Customize SDK")
+            .navigationTitle(Text(LocalizedStringKey(isRecovery ? "Recover from backup" : "Customize SDK")))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Queue change") {
-                        if let target { workspace.enqueue(app, target: target); dismiss() }
-                    }.disabled(workspace.busy || target == nil || target == app.version)
+                    Button {
+                        guard let target else { return }
+                        if isRecovery {
+                            guard verifiedBackup, workspace.enqueueVerifiedRecovery(app, verifiedSDK: target) else { return }
+                        } else {
+                            workspace.enqueue(app, target: target)
+                        }
+                        dismiss()
+                    } label: {
+                        Text(LocalizedStringKey(isRecovery ? "Queue verified recovery" : "Queue change"))
+                    }
+                    .disabled(workspace.busy || target == nil || target == app.version || (isRecovery && !verifiedBackup))
                 }
             }
         }
-        .onAppear { input = (workspace.requests[app.id]?.target ?? app.version).description }
+        .onAppear {
+            if let queued = workspace.requests[app.id], queued.verifiedRecovery == isRecovery {
+                input = queued.target.description
+            } else {
+                input = isRecovery ? "" : app.version.description
+            }
+            verifiedBackup = false
+        }
     }
 }
 /// Review and apply in the app library; no separate changes destination.
@@ -509,6 +548,7 @@ private struct PendingChangesPanel: View {
                                     Text("\(request.app.version.description) → \(request.target.description)")
                                         .font(.caption.monospaced()).foregroundStyle(.secondary)
                                     if request.restoring { Text("Restore original value").font(.caption).foregroundStyle(.orange) }
+                                    if request.verifiedRecovery { Text("Verified external recovery").font(.caption).foregroundStyle(.orange) }
                                 }
                                 Spacer()
                                 Button("Remove", systemImage: "minus.circle") { workspace.requests[request.id] = nil }
@@ -534,7 +574,11 @@ private struct PendingChangesPanel: View {
         .confirmationDialog("Apply these SDK changes?", isPresented: $confirming, titleVisibility: .visible) {
             Button("Apply and save recovery data", role: .destructive) { Task { await workspace.execute(preview: false) } }
         } message: {
-            Text("Save your work in other apps first. Restart your iPhone after applying.")
+            if workspace.queue.contains(where: { $0.verifiedRecovery }) {
+                Text("A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing.")
+            } else {
+                Text("Save your work in other apps first. Restart your iPhone after applying.")
+            }
         }
     }
     @ViewBuilder private var actions: some View {

@@ -106,5 +106,44 @@ extension ReleaseTag {
         await model.scan()
         assert(model.queue.isEmpty)
         print("PASS: parsing, mixed targets, downgrade, no-op, bounds, busy guard, migration, preview, repeated edits, failure recovery, persistence, drift, restore, rescan")
+
+        // Repair a tag modified by another tool using a user-verified backup value.
+        let verifiedSuite = "SDKShift.verified." + UUID().uuidString
+        let verifiedDefaults = UserDefaults(suiteName: verifiedSuite)!
+        defer { verifiedDefaults.removePersistentDomain(forName: verifiedSuite) }
+        let verifiedModel = ShiftWorkspace(defaults: verifiedDefaults, defaultSDK: .fixtureDestination)
+        let external = AppEntry(id: "external.example", title: "External test app", version: prior)
+        let knownBefore = ReleaseTag(major: 18, minor: 1, patch: 0)
+        assert(!verifiedModel.enqueueVerifiedRecovery(external, verifiedSDK: prior))
+        assert(!verifiedModel.enqueueVerifiedRecovery(external, verifiedSDK: ReleaseTag(major: 100, minor: 1, patch: 0)))
+        assert(verifiedModel.enqueueVerifiedRecovery(external, verifiedSDK: knownBefore))
+        assert(verifiedModel.requests[external.id]?.verifiedRecovery == true)
+        await CacheGateway.shared.configure([external])
+        await verifiedModel.execute(preview: true)
+        assert(verifiedModel.archive.recovery[external.id] == nil && verifiedModel.queue.count == 1)
+        verifiedModel.archive.recovery[external.id] = RestorePoint(original: prior, written: prior)
+        await CacheGateway.shared.configure([external], fail: true)
+        await verifiedModel.execute(preview: false)
+        assert(verifiedModel.archive.recovery[external.id]?.original == prior && verifiedModel.queue.count == 1)
+        await CacheGateway.shared.configure([external])
+        await verifiedModel.execute(preview: false)
+        let recovered = verifiedModel.inventory.first(where: { $0.id == external.id })!
+        assert(recovered.version == knownBefore && verifiedModel.archive.recovery[external.id] == nil)
+        let reopened = ShiftWorkspace(defaults: verifiedDefaults, defaultSDK: .fixtureDestination)
+        assert(reopened.recovery(for: recovered) == nil, "Verified recovery must not offer a bogus undo")
+        reopened.enqueue(recovered, target: custom)
+        await CacheGateway.shared.configure([recovered])
+        await reopened.execute(preview: false)
+        let adjusted = reopened.inventory.first(where: { $0.id == external.id })!
+        assert(reopened.recovery(for: adjusted)?.original == knownBefore)
+        reopened.enqueue(adjusted, restoring: true)
+        assert(reopened.queue.first?.target == knownBefore)
+        await reopened.execute(preview: false)
+        assert(reopened.inventory.first?.version == knownBefore && reopened.archive.recovery[external.id] == nil)
+        verifiedModel.enqueueVerifiedRecovery(external, verifiedSDK: knownBefore)
+        await verifiedModel.scan()
+        assert(verifiedModel.queue.isEmpty)
+        print("PASS: verified recovery validation, dry-run isolation, failed-write preservation, cleared old marker, new baseline, rescan")
+
     }
 }

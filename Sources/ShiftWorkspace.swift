@@ -33,11 +33,19 @@ struct RestorePoint: Codable {
     let original: ReleaseTag
     let written: ReleaseTag
 }
+enum ChangeKind {
+    case change
+    case restore
+    // Verified from a backup before a different tool changed the SDK tag.
+    case verifiedRecovery
+}
 struct ChangeRequest: Identifiable {
     let app: AppEntry
     let target: ReleaseTag
-    let restoring: Bool
+    let kind: ChangeKind
     var id: String { app.id }
+    var restoring: Bool { kind == .restore }
+    var verifiedRecovery: Bool { kind == .verifiedRecovery }
 }
 struct ActivityEntry: Codable, Identifiable {
     var id = UUID()
@@ -98,7 +106,13 @@ final class ShiftWorkspace {
         }
         guard target.isValid else { return }
         guard target != app.version else { requests[app.id] = nil; return }
-        requests[app.id] = ChangeRequest(app: app, target: target, restoring: restoring)
+        requests[app.id] = ChangeRequest(app: app, target: target, kind: restoring ? .restore : .change)
+    }
+    /// External recovery never treats the currently overridden tag as the original.
+    @discardableResult func enqueueVerifiedRecovery(_ app: AppEntry, verifiedSDK: ReleaseTag) -> Bool {
+        guard !busy, verifiedSDK.isValid, verifiedSDK != app.version else { return false }
+        requests[app.id] = ChangeRequest(app: app, target: verifiedSDK, kind: .verifiedRecovery)
+        return true
     }
     func scan() async {
         guard !busy else { return }
@@ -115,12 +129,15 @@ final class ShiftWorkspace {
         guard !busy, !queue.isEmpty else { return }
         let batch = queue
         let previousRecovery = archive.recovery
+        notice = nil
         busy = true
         defer { busy = false }
         do {
             // Durable recovery intent precedes writing. Retain it even if the operation fails.
             if !preview {
-                for change in batch where !change.restoring {
+                // Only ordinary changes create restore points. External recovery
+                // must not record an already-overridden value as the original.
+                for change in batch where change.kind == .change {
                     let prior = recovery(for: change.app)?.original ?? change.app.version
                     archive.recovery[change.id] = RestorePoint(original: prior, written: change.target)
                 }
@@ -129,12 +146,25 @@ final class ShiftWorkspace {
             let summary = try await CacheGateway.shared.execute(batch, preview: preview)
             report = summary + "\n" + (await CacheGateway.shared.log())
             if !preview {
-                for change in batch where change.restoring { archive.recovery[change.id] = nil }
+                // Do not erase old points until the write is confirmed.
+                // Save before refreshing so a refresh failure cannot undo the cleanup.
+                for change in batch where change.restoring || change.verifiedRecovery {
+                    archive.recovery[change.id] = nil
+                }
+                save()
                 requests.removeAll()
-                inventory = try await CacheGateway.shared.inventory()
+                do {
+                    inventory = try await CacheGateway.shared.inventory()
+                } catch {
+                    inventory = []
+                    report += "\nApp list refresh failed: " + error.localizedDescription
+                    notice = "Write succeeded, but refreshing the app list failed. Restart and scan again."
+                }
             }
             record(preview ? "Check completed" : "Applied · Restart required", report)
-            notice = preview ? "The system database was not written. Review write-access and lock results in the report." : "The database was written. Restart your iPhone, then check the display behavior."
+            if notice == nil {
+                notice = preview ? "The system database was not written. Review write-access and lock results in the report." : "The database was written. Restart your iPhone, then check the display behavior."
+            }
         } catch {
             // A failed write that left the old value intact must retain its earlier restore point.
             if !preview, let current = try? await CacheGateway.shared.inventory() {

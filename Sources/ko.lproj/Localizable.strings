@@ -149,3 +149,13 @@
 "Developer & contact" = "개발자 및 연락처";
 
 "GitHub project" = "GitHub 프로젝트";
+
+// Verified external SDK recovery
+"Recover from backup" = "백업에서 복원";
+"Verified external recovery" = "검증된 외부 변경 복원";
+"Enter the SDK version found in a backup from before another tool changed this app." = "다른 도구가 이 앱을 변경하기 전의 백업에서 확인한 SDK 버전을 입력하세요.";
+"I verified this SDK version against a pre-change backup." = "변경 전 백업에서 이 SDK 버전을 확인했습니다.";
+"Queue verified recovery" = "검증된 복원 대기열에 추가";
+"After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "쓰기 성공 후 이 앱의 기존 SDKShift 복원 기록이 삭제됩니다. 앱의 실제 빌드 SDK를 검증하는 것은 아닙니다.";
+"A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "백업 복원이 포함되어 있습니다. 쓰기 전에 앱 ID와 대상 SDK 버전을 확인하세요.";
+"Write succeeded, but refreshing the app list failed. Restart and scan again." = "쓰기는 성공했지만 앱 목록 갱신에 실패했습니다. 재시작한 뒤 다시 스캔하세요.";

@@ -302,22 +302,59 @@ static NSString *lsdContainerCaches(uint64_t kind) {
     return [path stringByAppendingPathComponent:@"Library/Caches"];
 }
 
-static NSArray<NSString *> *inodeScanStoreDirectories(NSMutableString *log) {
+typedef NS_ENUM(NSInteger, FDScanOutcome) {
+    FDScanFound, FDScanTimedOut, FDScanExhausted, FDScanUnavailable
+};
+
+// Adapted from ForceDuoApp 1.2 (5b65200): on iOS 27.3 beta a scan upward
+// from inode 16 can time out long before reaching recent LaunchServices stores.
+// Start near the data volume's current inode high-water mark and scan backward.
+static NSArray<NSString *> *inodeScanStoreDirectories(NSMutableString *log, FDScanOutcome *outcome) {
+    *outcome = FDScanUnavailable;
     struct statfs volume;
-    if (statfs(NSHomeDirectory().fileSystemRepresentation, &volume) != 0) return @[];
-    NSMutableOrderedSet *dirs = [NSMutableOrderedSet orderedSet];
+    if (statfs(NSHomeDirectory().fileSystemRepresentation, &volume) != 0) {
+        [log appendFormat:@"Inode scan unavailable (statfs errno %d).\n", errno];
+        return @[];
+    }
+
+    uint64_t probeInode = 0;
+    NSString *probe = [NSTemporaryDirectory() stringByAppendingPathComponent:NSUUID.UUID.UUIDString];
+    int probeFD = open(probe.fileSystemRepresentation, O_CREAT | O_EXCL | O_WRONLY | O_CLOEXEC, 0600);
+    if (probeFD >= 0) {
+        struct stat st;
+        if (fstat(probeFD, &st) == 0) probeInode = (uint64_t)st.st_ino;
+        close(probeFD);
+        unlink(probe.fileSystemRepresentation);
+    } else {
+        [log appendFormat:@"Inode probe unavailable (errno %d); using fallback scan bound.\n", errno];
+    }
+
+    const uint64_t margin = 262144, fallbackTop = 40000000, afterHit = 262144;
+    const uint64_t first = (probeInode && probeInode <= UINT64_MAX - margin)
+        ? probeInode + margin : fallbackTop;
+    NSMutableOrderedSet<NSString *> *dirs = [NSMutableOrderedSet orderedSet];
     char path[PATH_MAX];
-    NSTimeInterval start = NSProcessInfo.processInfo.systemUptime;
-    unsigned inode = 16;
-    for (; inode <= 40000000; ++inode) {
-        if ((inode & 4095) == 0 && NSProcessInfo.processInfo.systemUptime - start > 20.0) break;
+    NSTimeInterval began = NSProcessInfo.processInfo.systemUptime;
+    uint64_t inode = first, stopAt = 16;
+    FDScanOutcome status = FDScanExhausted;
+    for (; inode >= stopAt; --inode) {
+        if ((inode & 4095) == 0 && NSProcessInfo.processInfo.systemUptime - began > 20.0) {
+            status = FDScanTimedOut;
+            break;
+        }
         if (fsgetpath(path, sizeof(path), &volume.f_fsid, inode) <= 0) continue;
         if (!strstr(path, "LaunchServices-") || !strstr(path, "-v2.csstore")) continue;
         NSString *match = [NSString stringWithUTF8String:path];
         if ([match hasPrefix:@"/var/"]) match = [@"/private" stringByAppendingString:match];
-        if (isActiveStoreName(match.lastPathComponent)) [dirs addObject:match.stringByDeletingLastPathComponent];
+        if (!isActiveStoreName(match.lastPathComponent)) continue;
+        if (!dirs.count) stopAt = inode > afterHit + 16 ? inode - afterHit : 16;
+        [dirs addObject:match.stringByDeletingLastPathComponent];
     }
-    [log appendFormat:@"Inode scan up to %u: %lu directories.\n", inode, (unsigned long)dirs.count];
+    *outcome = dirs.count ? FDScanFound : status;
+    [log appendFormat:@"Inode scan down from %llu (probe inode %llu) to %llu in %.2fs: %lu directories%@.\n",
+        (unsigned long long)first, (unsigned long long)probeInode, (unsigned long long)inode,
+        NSProcessInfo.processInfo.systemUptime - began, (unsigned long)dirs.count,
+        status == FDScanTimedOut ? @", timed out" : @""];
     return dirs.array;
 }
 
@@ -406,6 +443,13 @@ static NSArray<NSString *> *mappedStoreDirectories(NSMutableString *log) {
 }
 
 - (FDAccess *)accessDirectory:(NSString *)directory quiet:(BOOL)quiet {
+    // Do not request a sandbox token for a path known to be absent. Keep trying
+    // if lstat fails for another reason: sandbox restrictions may hide metadata.
+    struct stat st;
+    if (lstat(directory.fileSystemRepresentation, &st) != 0 && errno == ENOENT) {
+        if (!quiet) [_log appendFormat:@"  %@ → path missing (ENOENT)\n", directory];
+        return nil;
+    }
     int64_t token = worse_query(directory, FDAppGroup, false, true);
     if (quiet) {
         if (token < 0) token = worse_query(directory, FDAppGroup, true, true);
@@ -499,12 +543,26 @@ static NSArray<NSString *> *mappedStoreDirectories(NSMutableString *log) {
             if (access) return [self rememberAccess:access];
         }
     }
-    for (NSString *directory in inodeScanStoreDirectories(_log)) {
-        if ([candidates containsObject:directory]) continue;
+    FDScanOutcome scanOutcome;
+    NSArray<NSString *> *scanned = inodeScanStoreDirectories(_log, &scanOutcome);
+    NSMutableArray<NSString *> *unopened = [NSMutableArray array];
+    for (NSString *directory in scanned) {
+        // Retry even previously attempted paths after resolving the actual store.
         FDAccess *access = [self accessDirectory:directory];
         if (access) return [self rememberAccess:access];
+        [unopened addObject:directory];
     }
-    if (error) *error = fdError(FDLocalizedString(@"Could not find or open the LaunchServices cache (iOS refused access).", nil));
+    if (error) {
+        NSString *message;
+        if (unopened.count) {
+            message = [NSString stringWithFormat:FDLocalizedString(@"Found a LaunchServices cache but could not open its store (%@).", nil), unopened.firstObject];
+        } else if (scanOutcome == FDScanTimedOut) {
+            message = FDLocalizedString(@"Could not locate the LaunchServices cache: inode scan timed out.", nil);
+        } else {
+            message = FDLocalizedString(@"Could not locate the LaunchServices cache on this device.", nil);
+        }
+        *error = fdError(message);
+    }
     return nil;
 }
 

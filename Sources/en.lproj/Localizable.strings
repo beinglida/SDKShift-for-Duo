@@ -39,6 +39,9 @@
 "No log yet." = "No log yet.";
 "Log" = "Log";
 "Could not find or open the LaunchServices cache (iOS refused access)." = "Could not find or open the LaunchServices cache (iOS refused access).";
+"Found a LaunchServices cache but could not open its store (%@)." = "Found a LaunchServices cache but could not open its store (%@).";
+"Could not locate the LaunchServices cache: inode scan timed out." = "Could not locate the LaunchServices cache: inode scan timed out.";
+"Could not locate the LaunchServices cache on this device." = "Could not locate the LaunchServices cache on this device.";
 "Could not read the cache (errno %d)." = "Could not read the cache (errno %d).";
 "The cache is empty or too large." = "The cache is empty or too large.";
 "The cache format does not match a verified layout. Nothing was changed." = "The cache format does not match a verified layout. Nothing was changed.";
@@ -154,3 +157,13 @@
 "Developer & contact" = "Developer & contact";
 
 "GitHub project" = "GitHub project";
+
+// Verified external SDK recovery
+"Recover from backup" = "Recover from backup";
+"Verified external recovery" = "Verified external recovery";
+"Enter the SDK version found in a backup from before another tool changed this app." = "Enter the SDK version found in a backup from before another tool changed this app.";
+"I verified this SDK version against a pre-change backup." = "I verified this SDK version against a pre-change backup.";
+"Queue verified recovery" = "Queue verified recovery";
+"After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK.";
+"A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing.";
+"Write succeeded, but refreshing the app list failed. Restart and scan again." = "Write succeeded, but refreshing the app list failed. Restart and scan again.";

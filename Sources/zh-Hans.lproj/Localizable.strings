@@ -54,6 +54,9 @@
 
 // Engine messages; diagnostic traces remain verbatim.
 "Could not find or open the LaunchServices cache (iOS refused access)." = "无法找到或打开 LaunchServices 缓存（iOS 拒绝访问）。";
+"Found a LaunchServices cache but could not open its store (%@)." = "找到了 LaunchServices 缓存，但无法打开对应的数据库（%@）。";
+"Could not locate the LaunchServices cache: inode scan timed out." = "无法定位 LaunchServices 缓存：inode 扫描超时。";
+"Could not locate the LaunchServices cache on this device." = "无法在此设备上定位 LaunchServices 缓存。";
 "Could not read the cache (errno %d)." = "无法读取缓存（错误码 %d）。";
 "The cache is empty or too large." = "缓存为空或过大。";
 "The cache format does not match a verified layout. Nothing was changed." = "缓存格式与已验证布局不匹配，未进行修改。";
@@ -115,3 +118,13 @@
 "Developer & contact" = "开发者与联系";
 
 "GitHub project" = "GitHub 项目";
+
+// Verified external SDK recovery
+"Recover from backup" = "从备份恢复";
+"Verified external recovery" = "外部恢复（已核对备份）";
+"Enter the SDK version found in a backup from before another tool changed this app." = "请输入在其他工具修改该应用之前的备份中查到的 SDK 版本。";
+"I verified this SDK version against a pre-change backup." = "我已在修改前的备份中核对该 SDK 版本。";
+"Queue verified recovery" = "加入已核对的恢复任务";
+"After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "写入成功后，将清除该应用旧的 SDKShift 恢复记录。这并不证明应用实际编译时使用的 SDK 版本。";
+"A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "待处理任务包含从备份恢复。写入前请核对应用 Bundle ID 和目标 SDK 版本。";
+"Write succeeded, but refreshing the app list failed. Restart and scan again." = "写入成功，但刷新应用列表失败。请重启手机并重新扫描。";

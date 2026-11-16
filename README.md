@@ -107,6 +107,24 @@ The screenshots show the earlier ForceDuo-style interface, not SDKShift's redesi
 
 After app or system updates, recheck the override and display behavior. Apply changes, fully restart the iPhone, then validate each app on both screens and in both orientations.
 
+### iOS 27.3 beta cache discovery diagnostics
+
+This fork adapts the [ForceDuoApp 1.2 fix](https://github.com/34306/ForceDuoApp/commit/5b65200015f7ed0a0fdf34708bd857e4a34e1f80). Instead of scanning upward from inode 16, the fallback creates a temporary local probe file to estimate the current inode high-water mark, scans downward, then checks nearby inodes after the first matching cache. Reports now distinguish scan timeout, cache not found, and cache found but inaccessible.
+
+**Limitations:** This improves cache discovery and diagnostics only. It has not been verified on an iOS 27.3 beta device and cannot guarantee read/write access to the system store. Scanning or performing a dry run does not write SDK changes. Review original SDK records carefully before applying changes: SDKShift cannot automatically recover original values corrupted by another tool.
+
+### Recover an externally overridden SDK tag from a backup
+
+If another tool modified an app's SDK tag, SDKShift cannot infer the original from the current LaunchServices record. First verify the app's Bundle ID and SDK version using a **backup made before the external change**, then select **Recover from backup** on its app card:
+
+1. Confirm the app's Bundle ID and displayed current SDK.
+2. Manually enter the version confirmed in that backup and acknowledge verification. This mode does not offer the system SDK shortcut.
+3. Review the queued **Verified external recovery** and its exact before/after SDK. Run **Check without writing** and inspect the report before confirming a write and fully restarting.
+4. Only after a successful database write does SDKShift clear that app's old restore marker. Failed writes retain existing markers; dry runs never modify them.
+5. Later ordinary SDK customizations use the now-recovered SDK as their baseline for a normal SDKShift restore point.
+
+This does **not** import or replace the entire system database, automatically read backups, or prove an app's actual build SDK. Backups can themselves contain previous overrides. Never guess a target version.
+
 ## Validation and limits
 
 An earlier build successfully read 604-byte Bundle records and parsed 400 apps on an iPhone Duo running iOS 27.2. The earlier SDKShift build was signed, installed and launched. The rewritten UI and bilingual build have passed local compilation; this is not proof of every target app's behavior or of visual QA on every device size.
