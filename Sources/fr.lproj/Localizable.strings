@@ -159,3 +159,17 @@
 "After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "Après une écriture réussie, l’ancien point de restauration SDKShift de cette app est supprimé. Cela ne vérifie pas son véritable SDK de compilation.";
 "A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "Une restauration depuis une sauvegarde est incluse. Vérifiez les identifiants des apps et les versions SDK avant toute écriture.";
 "Write succeeded, but refreshing the app list failed. Restart and scan again." = "L’écriture a réussi, mais l’actualisation de la liste des apps a échoué. Redémarrez et relancez l’analyse.";
+
+"Set SDK for all apps" = "Définir le SDK de toutes les apps";
+
+"Scanned apps" = "Apps analysées";
+
+"Apps to change" = "Apps à modifier";
+
+"Already at target" = "Déjà à la version cible";
+
+"Apps to downgrade" = "Apps dont le tag sera abaissé";
+
+"Queue all changes" = "Ajouter toutes les modifications";
+
+"Includes both app groups and ignores search and filters. Replaces the pending queue; matching versions are skipped. Nothing is written until you apply." = "Inclut les deux groupes sans tenir compte des filtres ou recherches. Remplace la file et ignore les versions identiques. Aucune écriture avant application.";

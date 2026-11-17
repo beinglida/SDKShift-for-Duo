@@ -108,6 +108,17 @@ final class ShiftWorkspace {
         guard target != app.version else { requests[app.id] = nil; return }
         requests[app.id] = ChangeRequest(app: app, target: target, kind: restoring ? .restore : .change)
     }
+    /// Replace the pending batch using the complete inventory, independent of UI filters.
+    /// No recovery records or system data are written until execute(preview: false).
+    @discardableResult func enqueueAll(target: ReleaseTag) -> Bool {
+        guard !busy, target.isValid, !inventory.isEmpty else { return false }
+        var batch: [String: ChangeRequest] = [:]
+        for app in inventory where app.version != target {
+            batch[app.id] = ChangeRequest(app: app, target: target, kind: .change)
+        }
+        requests = batch
+        return true
+    }
     /// External recovery never treats the currently overridden tag as the original.
     @discardableResult func enqueueVerifiedRecovery(_ app: AppEntry, verifiedSDK: ReleaseTag) -> Bool {
         guard !busy, verifiedSDK.isValid, verifiedSDK != app.version else { return false }

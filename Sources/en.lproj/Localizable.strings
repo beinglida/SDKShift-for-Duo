@@ -167,3 +167,17 @@
 "After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK.";
 "A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing.";
 "Write succeeded, but refreshing the app list failed. Restart and scan again." = "Write succeeded, but refreshing the app list failed. Restart and scan again.";
+
+"Set SDK for all apps" = "Set SDK for all apps";
+
+"Scanned apps" = "Scanned apps";
+
+"Apps to change" = "Apps to change";
+
+"Already at target" = "Already at target";
+
+"Apps to downgrade" = "Apps to downgrade";
+
+"Queue all changes" = "Queue all changes";
+
+"Includes both app groups and ignores search and filters. Replaces the pending queue; matching versions are skipped. Nothing is written until you apply." = "Includes both app groups and ignores search and filters. Replaces the pending queue; matching versions are skipped. Nothing is written until you apply.";

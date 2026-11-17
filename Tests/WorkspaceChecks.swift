@@ -145,5 +145,36 @@ extension ReleaseTag {
         assert(verifiedModel.queue.isEmpty)
         print("PASS: verified recovery validation, dry-run isolation, failed-write preservation, cleared old marker, new baseline, rescan")
 
+        let bulkSuite = "SDKShift.bulk." + UUID().uuidString
+        let bulkDefaults = UserDefaults(suiteName: bulkSuite)!
+        defer { bulkDefaults.removePersistentDomain(forName: bulkSuite) }
+        let bulk = ShiftWorkspace(defaults: bulkDefaults, defaultSDK: .fixtureDestination)
+        let bulkTarget = ReleaseTag.fixtureDestination
+        let older = AppEntry(id: "bulk.old", title: "Older", version: original)
+        let matching = AppEntry(id: "bulk.same", title: "Same", version: bulkTarget)
+        let higher = AppEntry(id: "bulk.high", title: "Higher", version: custom)
+        bulk.inventory = [older, matching, higher]
+        bulk.archive.recovery[higher.id] = RestorePoint(original: prior, written: custom)
+        bulk.enqueueVerifiedRecovery(older, verifiedSDK: prior)
+        bulk.busy = true
+        assert(!bulk.enqueueAll(target: bulkTarget) && bulk.requests[older.id]?.verifiedRecovery == true)
+        bulk.busy = false
+        assert(!bulk.enqueueAll(target: ReleaseTag(major: 0, minor: 0, patch: 0)))
+        assert(bulk.enqueueAll(target: bulkTarget))
+        assert(bulk.queue.count == 2 && bulk.requests[matching.id] == nil)
+        assert(bulk.queue.allSatisfy { $0.target == bulkTarget && $0.kind == .change })
+        assert(bulk.archive.recovery[older.id] == nil)
+        await CacheGateway.shared.configure(bulk.inventory)
+        await bulk.execute(preview: true)
+        assert(bulk.queue.count == 2 && bulk.archive.recovery[older.id] == nil)
+        await bulk.execute(preview: false)
+        assert(bulk.inventory.allSatisfy { $0.version == bulkTarget })
+        assert(bulk.archive.recovery[older.id]?.original == original)
+        assert(bulk.archive.recovery[higher.id]?.original == prior)
+        assert(bulk.enqueueAll(target: bulkTarget) && bulk.queue.isEmpty)
+        bulk.inventory = []
+        assert(!bulk.enqueueAll(target: bulkTarget))
+        print("PASS: bulk selection, busy/invalid/empty guards, queue replacement, same-version skip, preview isolation, mixed upgrades/downgrades, original recovery preservation")
+
     }
 }

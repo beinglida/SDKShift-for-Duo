@@ -160,3 +160,5 @@ python3 Tests/check_localizations.py
 - [社区 SDK 实验](https://www.reddit.com/r/sideloaded/comments/1xvhqh4/release_experimental_duo_sdk_remove_the_black/)：思路参考，不是通用兼容性保证。
 
 本项目为衍生原型，以未签名 IPA 形式分发供个人重签。若你再分发，请遵守 worse_query 的 GPL-3.0 条款，并注意 ForceDuo 衍生引擎尚未厘清的授权问题。
+
+在首页点击 **批量设置 SDK**，输入目标版本并查看修改、跳过和降级数量。点击 **全部加入变更** 会用当前扫描到的两个分组的全部应用替换待处理队列，不受搜索和筛选影响；已是目标版本的应用自动跳过。此步骤不立即写入，随后通过底部操作栏预检、统一写入并完整重启。已有有效原值恢复记录继续保留。“全部”指扫描器能够列出的应用，不包括无法访问的系统应用。

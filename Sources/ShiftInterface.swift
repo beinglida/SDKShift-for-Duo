@@ -51,6 +51,7 @@ private struct LibraryScreen: View {
     @AppStorage("sdkshift.language") private var language = "en"
     @Environment(ShiftWorkspace.self) private var workspace
     @State private var query = ""
+    @State private var batchEditing = false
     @State private var scrollDriver = LibraryScrollDriver()
     @State private var legacyOnly = false
     @AppStorage("sdkshift.indexGroup") private var indexGroup = "other"
@@ -125,6 +126,8 @@ private struct LibraryScreen: View {
                 .background(.teal.opacity(0.07), in: RoundedRectangle(cornerRadius: 12))
                 Text("\(modifiedApps.count + otherApps.count) apps · On-device, no icon downloads")
                     .font(.caption).foregroundStyle(.secondary)
+                Button("Set SDK for all apps", systemImage: "square.stack.3d.up") { batchEditing = true }
+                    .buttonStyle(.bordered).disabled(workspace.busy || workspace.inventory.isEmpty)
                 Picker("Sort apps", selection: $orderValue) {
                     ForEach(LibraryOrder.allCases, id: \.rawValue) { value in
                         Text(LocalizedStringKey(value.rawValue)).tag(value.rawValue)
@@ -186,6 +189,7 @@ private struct LibraryScreen: View {
         }
         .background(Color(uiColor: .systemGroupedBackground))
         .searchable(text: $query, prompt: "Search names or bundle IDs")
+        .sheet(isPresented: $batchEditing) { BulkSDKEditor().environment(workspace) }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if !workspace.queue.isEmpty { PendingChangesPanel() }
         }
@@ -452,6 +456,53 @@ private struct ApplicationTile: View {
         .sheet(isPresented: $recovering) { SDKEditor(app: app, purpose: .verifiedRecovery).environment(workspace) }
     }
 }
+private struct BulkSDKEditor: View {
+    @Environment(ShiftWorkspace.self) private var workspace
+    @Environment(\.dismiss) private var dismiss
+    @State private var input = ""
+    private var target: ReleaseTag? { ReleaseTag.parse(input) }
+    private var changes: Int { guard let target else { return 0 }; return workspace.inventory.filter { $0.version != target }.count }
+    private var downgrades: Int { guard let target else { return 0 }; return workspace.inventory.filter { $0.version > target }.count }
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Target SDK") {
+                    TextField("SDK version", text: $input).keyboardType(.decimalPad)
+                        .autocorrectionDisabled().textInputAutocapitalization(.never)
+                    Button("Use \(workspace.defaultSDK.description)") { input = workspace.defaultSDK.description }
+                    Text("Enter major.minor or major.minor.patch. Major: 1–99; minor and patch: 0–99.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    if let target { LabeledContent("Target SDK", value: target.description) }
+                    else { Text("Invalid SDK version").foregroundStyle(.red) }
+                }
+                Section {
+                    LabeledContent("Scanned apps", value: workspace.inventory.count.formatted())
+                    if target != nil {
+                        LabeledContent("Apps to change", value: changes.formatted())
+                        LabeledContent("Already at target", value: (workspace.inventory.count - changes).formatted())
+                        LabeledContent("Apps to downgrade", value: downgrades.formatted())
+                        if downgrades > 0 {
+                            Text("This will lower the SDK tag. Review compatibility after restarting.")
+                                .font(.footnote).foregroundStyle(.orange)
+                        }
+                    }
+                    Text("Includes both app groups and ignores search and filters. Replaces the pending queue; matching versions are skipped. Nothing is written until you apply.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    Text("Restart your iPhone after applying").font(.footnote)
+                }
+                Section {
+                    Button("Queue all changes", systemImage: "plus.rectangle.on.rectangle") {
+                        if let target, workspace.enqueueAll(target: target) { dismiss() }
+                    }
+                    .disabled(workspace.busy || target == nil || workspace.inventory.isEmpty || changes == 0)
+                }
+            }
+            .navigationTitle("Set SDK for all apps")
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
+        }
+        .onAppear { input = workspace.defaultSDK.description }
+    }
+}
 private enum SDKEditorPurpose: Equatable {
     case customize
     case verifiedRecovery
@@ -623,6 +674,7 @@ private struct AboutScreen: View {
                 LabeledContent("System", value: UIDevice.current.systemVersion)
                 Text("Change app SDK version tags to explore display compatibility. This does not recompile apps or upgrade iOS.")
             }
+            #if !ANONYMOUS_RELEASE
             Section("Developer & contact") {
                 Link(destination: URL(string: "https://x.com/dreamer_in_ca")!) {
                     Label {
@@ -644,6 +696,7 @@ private struct AboutScreen: View {
                     } icon: { Image(systemName: "chevron.left.forwardslash.chevron.right") }
                 }
             }
+            #endif
             Section("Recovery and privacy") {
                 Text("Existing SDKShift recovery data is migrated. Original values from other tools are not imported automatically.")
                 Text("App listings, reports, and recovery data stay on your device. Review app identifiers and paths before sharing reports.")

@@ -128,3 +128,17 @@
 "After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "写入成功后，将清除该应用旧的 SDKShift 恢复记录。这并不证明应用实际编译时使用的 SDK 版本。";
 "A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "待处理任务包含从备份恢复。写入前请核对应用 Bundle ID 和目标 SDK 版本。";
 "Write succeeded, but refreshing the app list failed. Restart and scan again." = "写入成功，但刷新应用列表失败。请重启手机并重新扫描。";
+
+"Set SDK for all apps" = "批量设置 SDK";
+
+"Scanned apps" = "已扫描应用";
+
+"Apps to change" = "需要修改";
+
+"Already at target" = "已是目标版本";
+
+"Apps to downgrade" = "将被降级";
+
+"Queue all changes" = "全部加入变更";
+
+"Includes both app groups and ignores search and filters. Replaces the pending queue; matching versions are skipped. Nothing is written until you apply." = "包括两个分组的全部应用，不受搜索和筛选影响。将替换当前待处理队列，并跳过已是目标版本的应用；点击写入前不会修改系统数据。";

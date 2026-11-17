@@ -160,3 +160,5 @@ The default is derived locally from `ProcessInfo.operatingSystemVersion`, includ
 - [Community SDK experiment](https://www.reddit.com/r/sideloaded/comments/1xvhqh4/release_experimental_duo_sdk_remove_the_black/): inspiration, not a universal compatibility guarantee.
 
 This is a derivative prototype distributed as an unsigned IPA for personal re-signing. If you redistribute it, account for the GPL-3.0 terms of worse_query and the unresolved licensing of the ForceDuo-derived engine.
+
+Use **Set SDK for all apps** on the Apps page to enter a custom target and review the change/skip/downgrade counts. **Queue all changes** replaces the pending queue with all currently scanned apps from both groups, ignoring search and filters; apps already at the target are skipped. It does not write immediately. Run preflight and apply from the existing bottom panel, then restart. Existing valid original-value restore points are retained. “All” means apps available to this scanner, not every protected system app.

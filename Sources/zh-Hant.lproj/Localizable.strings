@@ -159,3 +159,17 @@
 "After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "寫入成功後，將清除此 App 舊有的 SDKShift 還原紀錄。這不代表已驗證 App 實際編譯時使用的 SDK 版本。";
 "A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "待處理項目包含從備份還原。寫入前請核對 App Bundle ID 和目標 SDK 版本。";
 "Write succeeded, but refreshing the app list failed. Restart and scan again." = "寫入成功，但重新整理 App 清單失敗。請重新啟動並再次掃描。";
+
+"Set SDK for all apps" = "批次設定 SDK";
+
+"Scanned apps" = "已掃描應用";
+
+"Apps to change" = "需要修改";
+
+"Already at target" = "已是目標版本";
+
+"Apps to downgrade" = "將被降級";
+
+"Queue all changes" = "全部加入變更";
+
+"Includes both app groups and ignores search and filters. Replaces the pending queue; matching versions are skipped. Nothing is written until you apply." = "包含兩個分組的所有應用，不受搜尋和篩選影響。將取代目前待處理佇列，並略過已是目標版本的應用；套用前不會寫入系統資料。";

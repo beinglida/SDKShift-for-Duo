@@ -159,3 +159,17 @@
 "After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "書き込み成功後、このアプリの以前の SDKShift 復元記録は削除されます。実際のビルド SDK が検証されるわけではありません。";
 "A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "バックアップからの復元が含まれています。書き込む前にアプリ ID と対象 SDK バージョンを確認してください。";
 "Write succeeded, but refreshing the app list failed. Restart and scan again." = "書き込みは成功しましたが、アプリ一覧の更新に失敗しました。再起動して再スキャンしてください。";
+
+"Set SDK for all apps" = "すべてのアプリの SDK を設定";
+
+"Scanned apps" = "スキャン済みアプリ";
+
+"Apps to change" = "変更するアプリ";
+
+"Already at target" = "対象バージョンと一致";
+
+"Apps to downgrade" = "タグを下げるアプリ";
+
+"Queue all changes" = "すべての変更を追加";
+
+"Includes both app groups and ignores search and filters. Replaces the pending queue; matching versions are skipped. Nothing is written until you apply." = "両グループの全アプリを対象にし、検索やフィルタは無視します。保留中の変更を置き換え、一致するバージョンは除外します。適用するまで書き込みません。";

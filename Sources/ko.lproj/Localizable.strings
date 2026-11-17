@@ -159,3 +159,17 @@
 "After a successful write, the old SDKShift restore point for this app is cleared. This does not verify the app's actual build SDK." = "쓰기 성공 후 이 앱의 기존 SDKShift 복원 기록이 삭제됩니다. 앱의 실제 빌드 SDK를 검증하는 것은 아닙니다.";
 "A backup-based recovery is included. Confirm the app IDs and target SDK versions before writing." = "백업 복원이 포함되어 있습니다. 쓰기 전에 앱 ID와 대상 SDK 버전을 확인하세요.";
 "Write succeeded, but refreshing the app list failed. Restart and scan again." = "쓰기는 성공했지만 앱 목록 갱신에 실패했습니다. 재시작한 뒤 다시 스캔하세요.";
+
+"Set SDK for all apps" = "모든 앱의 SDK 설정";
+
+"Scanned apps" = "스캔한 앱";
+
+"Apps to change" = "변경할 앱";
+
+"Already at target" = "이미 대상 버전임";
+
+"Apps to downgrade" = "태그를 낮출 앱";
+
+"Queue all changes" = "모든 변경 추가";
+
+"Includes both app groups and ignores search and filters. Replaces the pending queue; matching versions are skipped. Nothing is written until you apply." = "검색과 필터에 관계없이 두 그룹의 모든 앱을 포함합니다. 대기열을 교체하고 대상 버전과 같은 앱은 건너뜁니다. 적용 전에는 쓰지 않습니다.";
